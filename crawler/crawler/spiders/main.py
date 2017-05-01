@@ -23,7 +23,6 @@ class MainSpider(CrawlSpider):
 
         # if domain is finished, just return 
         if self.trigram_counts.get(domain, 0) > 500:
-            print('Sufficient data for {}, continuing...'.format(domain))
             return
 
         # Get the set of trigrams found on the page
@@ -54,8 +53,8 @@ class MainSpider(CrawlSpider):
         word_set = tokenizer.tokenize(full_text)
         return word_set
 
-    # Returns a set of byte strings where each string is a trigram from the 
-    # input word list. We need byte strings to pass into the MinHash
+    # Returns a set of strings where each string is a trigram from the 
+    # input word list. 
     def trigram_set(self, word_list):
         trigram_tuples = trigrams(word_list)
         trigram_list = [' '.join(t) for t in trigram_tuples]
