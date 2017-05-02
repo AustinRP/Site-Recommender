@@ -8,11 +8,21 @@ from nltk.util import trigrams
 
 from urllib.parse import urlparse
 
+from scrapy.exceptions import CloseSpider
+
 class MainSpider(CrawlSpider):
     name = 'main'
     start_urls = ['https://moz.com/top500']
     trigram_counts = dict()
     minimum_trigram_count = 500
+
+    # Set it up to only use a single domain
+    def __init__(self, *args, **kwargs):
+        super(MainSpider, self).__init__(*args, **kwargs)
+        if hasattr(self, 'start_url'):
+            self.start_urls = [self.start_url]
+        if hasattr(self, 'allowed_domain'):
+            self.allowed_domains = [self.allowed_domain]
 
     rules = (
         Rule(LinkExtractor(), callback='parse_full_text', follow=True),
@@ -20,9 +30,12 @@ class MainSpider(CrawlSpider):
 
     def parse_full_text(self, response):
         domain = self.get_domain(response.url)
+        print(response.url)
 
         # if domain is finished, just return 
         if self.trigram_counts.get(domain, 0) > 500:
+            if hasattr(self, 'allowed_domains') and len(self.allowed_domains) == 1:
+                raise CloseSpider('Sufficient data found for site.')
             return
 
         # Get the set of trigrams found on the page
@@ -59,10 +72,3 @@ class MainSpider(CrawlSpider):
         trigram_tuples = trigrams(word_list)
         trigram_list = [' '.join(t) for t in trigram_tuples]
         return set(trigram_list)
-
-    # def closed( self, reason ):
-    #     # will be called when the crawler process ends
-    #     # any code 
-    #     # do something with collected data 
-    #     for i in self.spider_attr: 
-    #         print i
