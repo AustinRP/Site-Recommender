@@ -43,11 +43,11 @@ class MinHashPipeline(object):
         return item
 
     def close_spider(self, spider):
-        print('----- Saving to Pickle File -----')
+        print('-----  Saving to Pickle File  -----')
         # populate forest from MinHashes
         for domain, mh in self.minhashes.items():
             self.lsh_forest.add(domain, mh)
 
         # Save forest to pickle
         pickle.dump(self.lsh_forest, open(self.pickle_filename, 'wb'))
-        print('-----     Pickle Saved      -----')
+        print('-----  {} Saved  -----'.format(self.pickle_filename))

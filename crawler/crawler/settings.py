@@ -15,11 +15,11 @@ SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
 # Broad Crawl Configs - warning, might be dupes of things below
-CONCURRENT_REQUESTS = 100
+# CONCURRENT_REQUESTS = 25
 COOKIES_ENABLED = False
 RETRY_ENABLED = False
 DOWNLOAD_TIMEOUT = 15
-REDIRECT_ENABLED = False
+REDIRECT_ENABLED = True
 AJAXCRAWL_ENABLED = True
 # Breadth-first order
 DEPTH_PRIORITY = 1
