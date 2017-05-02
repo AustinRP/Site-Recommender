@@ -1,6 +1,6 @@
 import pickle
 from urllib.parse import urlparse
-from queue import Queue
+from collections import deque
 import subprocess
 
 from datasketch import MinHash
@@ -16,7 +16,7 @@ def main():
     while(True):
         # prompt for user input: domain and number of things to return
         print('Typing "end" as the url will end the program.')
-        url = input('Enter a url from the query website: ').strip()
+        url = input('Enter a url from the query website, including "http://" or "https://": ').strip()
 
         # if user inputs 'end', break
         if url.lower == 'end':
@@ -35,15 +35,19 @@ def main():
 
         # call the scraper to get trigram sets from the domain
         proc = subprocess.run(
-            args = ['scrapy', 'crawl', '-a', 'start_url={}'.format(url), '-a', 'allowed_domain={}'.format(domain), '-s', r'ITEM_PIPELINES=\{\}', '-o', '-', '-t', 'json', '--nolog', 'main'],
+            args = ['scrapy', 'crawl', '-a', 'start_url={}'.format(url), '-a', 'allowed_domain={}'.format(domain), '-s', r'ITEM_PIPELINES={}', '-o', '-', '-t', 'json', '--nolog', 'main'],
             universal_newlines = True,
             stdout = subprocess.PIPE)
         json_output = proc.stdout
 
+        result_queue = deque()
+
         ## parse json into result_queue
 
+        # fake data for testing
+        result_queue.append({'domain': domain, 'trigram_set': set(['a b c', 'b c d', 'c d e', 'd e f'])})
+
         # populate MinHash with data from result_queue
-        result_queue.put({'domain': domain, 'trigram_set': set(['a b c', 'b c d', 'c d e', 'd e f'])})
         print('results queue: {}'.format(result_queue))
         query_minhash = MinHash()
         for item in result_queue:
