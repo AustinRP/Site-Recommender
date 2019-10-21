@@ -10,7 +10,7 @@ datasketch==1.2.1
 idna==2.5
 incremental==16.10.1
 lxml==3.7.3
-nltk==3.2.2
+nltk==3.4.5
 numpy==1.12.1
 packaging==16.8
 parsel==1.1.0
